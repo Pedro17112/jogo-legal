@@ -1,0 +1,63 @@
+#pgzero
+
+import random
+
+WIDTH = 600 # Largura da janela
+HEIGHT = 300 # Altura da janela
+
+TITLE = "The mission of the Stuart" # Título da janela do jogo
+FPS = 30 # Quadros por segundo
+
+char = Actor('character_green_idle', (50, 240))
+background = Actor("Background_gpt" ,size = (600, 300))
+enemy = Actor('saw_a', (250, 270))
+gameover = Actor('Game_overgpt' ,size = (600, 300))
+tentar = Actor('tentar',(245, 227), size = (110, 25))
+
+game_over = 0
+def draw():
+    background.draw()
+    char.draw()
+    enemy.draw()
+    if game_over == 1:
+        gameover.draw()
+        tentar.draw()
+    
+def update(dt):
+    global game_over
+    # Movimentos do inimigo
+    if enemy.x > -20:
+        enemy.x = enemy.x - 10
+        enemy.angle = enemy.angle + 10
+    else:
+        enemy.x = WIDTH + 20
+        
+    # Controles
+    if keyboard.left and char.x > 20:
+        char.x = char.x - 5
+        char.image = 'character_green_idle'
+    elif keyboard.right and char.x < 280:
+        char.x = char.x + 5
+        char.image = 'character_green_idle'
+        #char.image = 'character_green_idle'
+
+    #else:
+         #char.image = 'character_green_idle'
+        
+    # Salto
+    if keyboard.space:
+        char.image = 'character_green_jump'
+        char.y = 150
+        animate(char, tween = "bounce_end", duration=0.5, y = 240)
+
+    # Colisão
+    if char.colliderect(enemy):
+        char.image = 'character_green_hit'
+        game_over = 1
+        #clicando
+def on_mouse_down(button, pos):
+    global game_over
+    if button == mouse.LEFT:
+        if tentar.collidepoint(pos):
+            char.pos = (50, 240)
+            game_over = 0
